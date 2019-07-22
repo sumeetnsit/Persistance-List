@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/estonia_white"
+        android:elevation="12dp">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/memelist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|enterAlways"
+            tools:context=".ui.memelist.MemeListFragment">
+
+            <EditText
+                android:id="@+id/et_search"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/estonia_white"
+                android:ellipsize="end"
+                android:hint="@string/search_meme"
+                android:padding="12dp"
+                android:paddingStart="24dp"
+                android:paddingEnd="50dp"
+                android:singleLine="true"
+                android:textColor="@color/estonia_black"
+                android:textCursorDrawable="@null"
+                android:textSize="16sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="RtlSymmetry"
+                tools:text="This is a random long text to test the view if it is working properly with very long strings." />
+
+            <ImageView
+                android:id="@+id/search_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                android:src="@drawable/ic_search_black_24dp"
+                app:layout_constraintBottom_toBottomOf="@id/et_search"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="@id/et_search" />
+
+            <TextView
+                android:id="@+id/clear_search"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center"
+                android:text="x"
+                android:textColor="@color/estonia_black"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/et_search"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/et_search" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_memeList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layoutAnimation="@anim/layout_animation_fall_down"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_search" />
+
+</android.support.design.widget.CoordinatorLayout>

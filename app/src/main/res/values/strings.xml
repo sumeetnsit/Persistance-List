@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">PersistanceList</string>
+    <string name="search_meme">Search meme</string>
+    <string name="meme_details">Meme details</string>
+    <string name="memes">Memes</string>
+    <string name="this_is_a_loader">this is a loader</string>
+    <string name="you_are_looking_at_the_meme">you are looking at the meme</string>
+</resources>
