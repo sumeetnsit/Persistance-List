@@ -1,6 +1,6 @@
 package com.sumeet.persistancelist.data.local;
 
-import android.arch.persistence.room.Room;
+import androidx.room.Room;
 
 import com.sumeet.persistancelist.MemeApplication;
 import com.sumeet.persistancelist.data.Meme;

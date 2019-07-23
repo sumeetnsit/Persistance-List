@@ -1,6 +1,6 @@
 package com.sumeet.persistancelist.ui.memelist;
 
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel;
 
 import com.sumeet.persistancelist.data.Meme;
 

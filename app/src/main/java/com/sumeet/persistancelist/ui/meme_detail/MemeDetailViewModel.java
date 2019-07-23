@@ -1,11 +1,11 @@
 package com.sumeet.persistancelist.ui.meme_detail;
 
-import android.arch.lifecycle.ViewModel;
-import android.support.annotation.NonNull;
-import android.support.v4.util.Pair;
+
+import androidx.annotation.NonNull;
+import androidx.core.util.Pair;
+import androidx.lifecycle.ViewModel;
 
 import io.reactivex.subjects.BehaviorSubject;
-
 
 public class MemeDetailViewModel extends ViewModel {
 

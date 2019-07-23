@@ -3,12 +3,15 @@ package com.sumeet.persistancelist.ui.memelist;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.sumeet.persistancelist.R;
 import com.sumeet.persistancelist.data.Meme;
@@ -24,6 +27,7 @@ public class MemeListActivity extends AppCompatActivity
         MemeDetailFragment.MemeDetailFragmentInteractionListener {
 
     private int backPressedCountInListing;
+    @Nullable
     private Disposable backPressDisposable;
 
     @Override
@@ -90,7 +94,9 @@ public class MemeListActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        backPressDisposable.dispose();
+        if (backPressDisposable != null) {
+            backPressDisposable.dispose();
+        }
     }
 
     @Override

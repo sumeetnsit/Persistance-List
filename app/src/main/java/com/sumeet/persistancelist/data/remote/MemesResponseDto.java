@@ -1,6 +1,6 @@
 package com.sumeet.persistancelist.data.remote;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
 import com.sumeet.persistancelist.data.Meme;

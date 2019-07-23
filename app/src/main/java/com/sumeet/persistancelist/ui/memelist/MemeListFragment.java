@@ -1,13 +1,8 @@
 package com.sumeet.persistancelist.ui.memelist;
 
-import android.arch.lifecycle.ViewModelProviders;
+
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -18,7 +13,16 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.sumeet.persistancelist.R;
+import com.sumeet.persistancelist.data.EspressoTestingIdlingResource;
+import com.sumeet.persistancelist.data.FetcherListener;
 import com.sumeet.persistancelist.data.Meme;
 import com.sumeet.persistancelist.data.MemesRepoImpl;
 import com.sumeet.persistancelist.ui.BaseFragmentInteractionListener;
@@ -26,25 +30,27 @@ import com.sumeet.persistancelist.ui.BaseFragmentInteractionListener;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 
-public class MemeListFragment extends Fragment implements CardAdapterCallback<Meme> {
+public class MemeListFragment extends Fragment implements CardAdapterCallback<Meme>,
+        FetcherListener {
 
     @NonNull
     private CompositeDisposable disposables = new CompositeDisposable();
 
     @Nullable
-    Context context;
+    private Context context;
 
     @Nullable
-    CardAdapter memesAdapter;
+    private CardAdapter memesAdapter;
 
     @NonNull
-    MemesRepoImpl memesRepo = new MemesRepoImpl();
+    private MemesRepoImpl memesRepo = new MemesRepoImpl();
 
     @Nullable
-    MemeListFragmentInteractionListener activityCommunicator;
+    private MemeListFragmentInteractionListener activityCommunicator;
+
     private RecyclerView recyclerView;
 
-    public static MemeListFragment newInstance() {
+    static MemeListFragment newInstance() {
         return new MemeListFragment();
     }
 
@@ -108,28 +114,38 @@ public class MemeListFragment extends Fragment implements CardAdapterCallback<Me
 
         clearSearch.setOnClickListener(v -> searchEditText.setText(""));
 
+        onFetchStarted();
         disposables.add(
                 mViewModel.getMemeList()
                         .observeOn(AndroidSchedulers.mainThread())
                         .doOnNext(newMemes -> {
                             if (memesAdapter != null) {
                                 memesAdapter.addData(newMemes);
-                                recyclerView.scheduleLayoutAnimation();
+                                onFetchFinished();
+                                setRecyclerViewLoadAnimation();
                             }
                         })
-                        .doOnError(e -> Log.e("sumeet", "sumeet", e))
+                        .doOnError(e -> {
+                            Log.e("sumeet", "sumeet", e);
+                            onFetchFinished();
+                        })
                         .subscribe()
         );
 
     }
 
+    private void setRecyclerViewLoadAnimation() {
+        int resId = R.anim.layout_animation_fall_down;
+        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(context, resId);
+        recyclerView.setLayoutAnimation(animation);
+    }
+
+
     private void setViews(@NonNull View rootView) {
         if (context != null) {
-            int resId = R.anim.layout_animation_fall_down;
-            LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(context, resId);
+
             recyclerView = rootView.findViewById(R.id.rv_memeList);
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setLayoutAnimation(animation);
             memesAdapter = new CardAdapter(context, this);
             memesAdapter.setHasStableIds(true);
             recyclerView.setAdapter(memesAdapter);
@@ -151,6 +167,16 @@ public class MemeListFragment extends Fragment implements CardAdapterCallback<Me
     public void onDestroy() {
         super.onDestroy();
         disposables.clear();
+    }
+
+    @Override
+    public void onFetchStarted() {
+        EspressoTestingIdlingResource.increment();
+    }
+
+    @Override
+    public void onFetchFinished() {
+        EspressoTestingIdlingResource.decrement();
     }
 
     public interface MemeListFragmentInteractionListener extends BaseFragmentInteractionListener {

@@ -1,18 +1,19 @@
 package com.sumeet.persistancelist.ui.meme_detail;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -33,13 +34,13 @@ public class MemeDetailFragment extends Fragment {
     private CompositeDisposable disposables = new CompositeDisposable();
 
     @Nullable
-    Context context;
+    private Context context;
 
     @Nullable
-    MemeDetailFragmentInteractionListener activityCommunicator;
+    private MemeDetailFragmentInteractionListener activityCommunicator;
 
-    public static MemeDetailFragment newInstance(@NonNull String imgUrl,
-                                                 @NonNull String memeName) {
+    public static Fragment newInstance(@NonNull String imgUrl,
+                                       @NonNull String memeName) {
         Bundle args = new Bundle();
         args.putString(ARGS_MEME_URL, imgUrl);
         args.putString(ARGS_MEME_NAME, memeName);

@@ -1,6 +1,7 @@
 package com.sumeet.persistancelist.data;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.sumeet.persistancelist.data.local.MemesLocalRepoImpl;
 import com.sumeet.persistancelist.data.remote.MemesRemoteRepoImpl;
@@ -35,6 +36,7 @@ public class MemesRepoImpl implements MemesRepo {
     public Observable<List<Meme>> getMemes() {
         //noinspection ConstantConditions
         return remoteRepo.getAllMemes()
+
                         .doOnNext(localRepo::addMemes)
                         .filter(MemesRepoImpl::isValidResponse)
                         .map(it -> it.body().getData().getMemes())

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PersistanceList</string>
+    <string name="app_name">PersistenceList</string>
     <string name="search_meme">Search meme</string>
     <string name="meme_details">Meme details</string>
     <string name="memes">Memes</string>
