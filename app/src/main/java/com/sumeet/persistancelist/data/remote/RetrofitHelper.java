@@ -1,5 +1,7 @@
 package com.sumeet.persistancelist.data.remote;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.readystatesoftware.chuck.ChuckInterceptor;
@@ -13,7 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitHelper {
 
 
-    protected <T> T create(Class<T> clazz, String baseUrl) {
+    <T> T create(@NonNull Class<T> clazz,@NonNull String baseUrl) {
         return retrofit(baseUrl).create(clazz);
     }
 

@@ -1,5 +1,7 @@
 package com.sumeet.persistancelist.data;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.sumeet.persistancelist.data.local.MemesLocalRepo;
@@ -34,11 +36,14 @@ public class MemesRepoImpl implements MemesRepo {
      */
     @Override
     public Observable<List<Meme>> getMemes() {
+
         return remoteRepo.getAllMemes()
                 .doOnNext(localRepo::addMemes)
                 .filter(MemesRepoImpl::isValidResponse)
                 .map(this::extractListFromNetworkResponse)
+                .doOnNext(logResults -> Log.i("api response", String.format("%d  memes receives from remote server", logResults.size())))
                 .observeOn(Schedulers.io())
+                .doOnError(e -> Log.e("log", "sumeet", e))
                 .onErrorResumeNext(getMemesFromLocalRepo())
                 .subscribeOn(Schedulers.io());
     }

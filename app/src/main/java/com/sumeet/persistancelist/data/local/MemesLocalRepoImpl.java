@@ -10,6 +10,7 @@ import com.sumeet.persistancelist.data.remote.MemesResponseDto;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
 public class MemesLocalRepoImpl implements MemesLocalRepo {
@@ -29,9 +30,14 @@ public class MemesLocalRepoImpl implements MemesLocalRepo {
 
     @Override
     public void addMemes(@NonNull MemesResponseDto memes) {
-        if (memes.getData() != null) {
-            memesDao.insertAll(memes.getData().getMemes());
-        }
+        Single.just("start saving memes")
+                .observeOn(Schedulers.io())
+                .doOnSuccess(__ -> {
+                    if (memes.getData() != null) {
+                        memesDao.insertAll(memes.getData().getMemes());
+                    }
+                }).subscribe();
+
     }
 
 }
