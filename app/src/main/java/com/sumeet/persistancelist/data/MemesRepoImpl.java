@@ -2,15 +2,14 @@ package com.sumeet.persistancelist.data;
 
 import androidx.annotation.NonNull;
 
-import com.sumeet.persistancelist.data.local.MemesLocalRepoImpl;
-import com.sumeet.persistancelist.data.remote.MemesRemoteRepoImpl;
+import com.sumeet.persistancelist.data.local.MemesLocalRepo;
+import com.sumeet.persistancelist.data.remote.MemesRemoteRepo;
 import com.sumeet.persistancelist.data.remote.MemesResponseDto;
 
 import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Response;
 
 /**
  * responsibility : to provide list of memes fetching from remote or getting it locally from db.
@@ -18,13 +17,15 @@ import retrofit2.Response;
 public class MemesRepoImpl implements MemesRepo {
 
     @NonNull
-    private final MemesLocalRepoImpl localRepo = new MemesLocalRepoImpl();
+    private MemesLocalRepo localRepo;
 
     @NonNull
-    private final MemesRemoteRepoImpl remoteRepo = new MemesRemoteRepoImpl();
+    private MemesRemoteRepo remoteRepo;
 
-    public MemesRepoImpl() {
-
+    public MemesRepoImpl(@NonNull MemesRemoteRepo remoteRepo,
+                         @NonNull MemesLocalRepo localRepo) {
+        this.localRepo = localRepo;
+        this.remoteRepo = remoteRepo;
     }
 
     /**
@@ -37,26 +38,23 @@ public class MemesRepoImpl implements MemesRepo {
                 .doOnNext(localRepo::addMemes)
                 .filter(MemesRepoImpl::isValidResponse)
                 .map(this::extractListFromNetworkResponse)
+                .observeOn(Schedulers.io())
                 .onErrorResumeNext(getMemesFromLocalRepo())
                 .subscribeOn(Schedulers.io());
     }
 
-    private Observable<List<Meme>> getMemesFromLocalRepo() {
+    public Observable<List<Meme>> getMemesFromLocalRepo() {
         return localRepo.getAllMeme();
     }
 
-    private List<Meme> extractListFromNetworkResponse(@NonNull Response<MemesResponseDto> it) {
+    public List<Meme> extractListFromNetworkResponse(@NonNull MemesResponseDto it) {
         //noinspection ConstantConditions
-        return it.body().getData().getMemes();
+        return it.getData().getMemes();
     }
 
-    public static boolean isValidResponse(Response<MemesResponseDto> memesResponseDtoResponse) {
-        return memesResponseDtoResponse.isSuccessful()
-                && memesResponseDtoResponse.body() != null
-                && memesResponseDtoResponse.body().getSuccess() != null &&
-                memesResponseDtoResponse.body().getSuccess() &&
-                memesResponseDtoResponse.body().getData() != null &&
-                memesResponseDtoResponse.body().getData().getMemes() != null &&
-                memesResponseDtoResponse.body().getData().getMemes().size() > 0;
+    private static boolean isValidResponse(MemesResponseDto memesResponseDtoResponse) {
+        return memesResponseDtoResponse.getData() != null &&
+                memesResponseDtoResponse.getData().getMemes() != null &&
+                memesResponseDtoResponse.getData().getMemes().size() > 0;
     }
 }

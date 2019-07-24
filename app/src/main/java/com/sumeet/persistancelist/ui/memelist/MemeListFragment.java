@@ -23,6 +23,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.sumeet.persistancelist.R;
 import com.sumeet.persistancelist.data.Meme;
 import com.sumeet.persistancelist.data.MemesRepoImpl;
+import com.sumeet.persistancelist.data.local.MemesLocalRepoImpl;
+import com.sumeet.persistancelist.data.remote.MemesRemoteRepoImpl;
 import com.sumeet.persistancelist.ui.BaseFragmentInteractionListener;
 
 import java.util.List;
@@ -39,7 +41,8 @@ public class MemeListFragment extends Fragment
     private CardAdapter memesAdapter;
 
     @NonNull
-    private MemesRepoImpl memesRepo = new MemesRepoImpl();
+    private MemesRepoImpl memesRepo = new MemesRepoImpl(
+            new MemesRemoteRepoImpl(), new MemesLocalRepoImpl());
 
     @Nullable
     private MemeListFragmentInteractionListener activityCommunicator;

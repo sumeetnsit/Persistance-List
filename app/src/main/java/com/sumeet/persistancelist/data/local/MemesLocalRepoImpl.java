@@ -1,5 +1,6 @@
 package com.sumeet.persistancelist.data.local;
 
+import androidx.annotation.NonNull;
 import androidx.room.Room;
 
 import com.sumeet.persistancelist.MemeApplication;
@@ -9,9 +10,7 @@ import com.sumeet.persistancelist.data.remote.MemesResponseDto;
 import java.util.List;
 
 import io.reactivex.Observable;
-import retrofit2.Response;
-
-import static com.sumeet.persistancelist.data.MemesRepoImpl.isValidResponse;
+import io.reactivex.schedulers.Schedulers;
 
 public class MemesLocalRepoImpl implements MemesLocalRepo {
 
@@ -25,16 +24,14 @@ public class MemesLocalRepoImpl implements MemesLocalRepo {
 
     @Override
     public Observable<List<Meme>> getAllMeme() {
-        return Observable.fromCallable(() -> memesDao.getAll());
+        return Observable.fromCallable(() -> memesDao.getAll()).observeOn(Schedulers.io());
     }
 
     @Override
-    public void addMemes(Response<MemesResponseDto> memes) {
-        if (isValidResponse(memes)) {
-            //noinspection ConstantConditions
-            memesDao.insertAll(memes.body().getData().getMemes());
+    public void addMemes(@NonNull MemesResponseDto memes) {
+        if (memes.getData() != null) {
+            memesDao.insertAll(memes.getData().getMemes());
         }
     }
-
 
 }

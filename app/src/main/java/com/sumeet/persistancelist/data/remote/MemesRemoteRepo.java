@@ -5,6 +5,6 @@ import retrofit2.Response;
 
 public interface MemesRemoteRepo {
 
-    public Observable<Response<MemesResponseDto>> getAllMemes();
+    public Observable<MemesResponseDto> getAllMemes();
 
 }

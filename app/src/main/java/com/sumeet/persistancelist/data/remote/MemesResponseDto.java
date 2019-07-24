@@ -10,20 +10,19 @@ import java.util.List;
 
 public class MemesResponseDto implements Serializable {
 
-    @Nullable
+
     @SerializedName("success")
-    private Boolean success;
+    private boolean success = false;
     @Nullable
     @SerializedName("data")
     private Data data;
 
-    public MemesResponseDto(@Nullable Boolean success, @Nullable Data data) {
+    public MemesResponseDto(final boolean success, @Nullable Data data) {
         this.success = success;
         this.data = data;
     }
 
-    @Nullable
-    public Boolean getSuccess() {
+    public boolean getSuccess() {
         return success;
     }
 
