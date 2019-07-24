@@ -5,4 +5,5 @@
     <string name="memes">Memes</string>
     <string name="this_is_a_loader">this is a loader</string>
     <string name="you_are_looking_at_the_meme">you are looking at the meme</string>
+    <string name="sorry_no_results_found">Sorry no results found</string>
 </resources>

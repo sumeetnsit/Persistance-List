@@ -7,5 +7,6 @@
     <color name="estonia_black">#000000</color>
     <color name="estonia_white">#FFFFFF</color>
     <color name="background_gray">#FF424242</color>
+    <color name="transparent">#00000000</color>
 
 </resources>

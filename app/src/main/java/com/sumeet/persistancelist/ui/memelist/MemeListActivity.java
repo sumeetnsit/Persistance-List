@@ -3,7 +3,6 @@ package com.sumeet.persistancelist.ui.memelist;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
@@ -73,9 +72,8 @@ public class MemeListActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager() != null &&
-                getSupportFragmentManager().findFragmentById(R.id.container)
-                        instanceof MemeDetailFragment) {
+        if (getSupportFragmentManager().findFragmentById(R.id.container)
+                instanceof MemeDetailFragment) {
             setToolbar(getString(R.string.memes));
         } else if (backPressedCountInListing == 0) {
             backPressedCountInListing++;

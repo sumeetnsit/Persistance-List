@@ -5,18 +5,14 @@ import android.widget.EditText;
 
 import androidx.fragment.app.FragmentFactory;
 import androidx.fragment.app.testing.FragmentScenario;
-import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.sumeet.persistancelist.R;
-import com.sumeet.persistancelist.data.EspressoTestingIdlingResource;
-import com.sumeet.persistancelist.ui.memelist.MemeListFragment;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,11 +44,6 @@ public class MemeListTests {
         editText.check(matches(isDisplayed()));
     }
 
-
-    @After
-    public void afterTesting() {
-        IdlingRegistry.getInstance().unregister(EspressoTestingIdlingResource.getIdlingResource());
-    }
 
     private Matcher<View> withHint(final String expectedHint) {
         return new TypeSafeMatcher<View>() {

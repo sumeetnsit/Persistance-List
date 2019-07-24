@@ -1,7 +1,6 @@
 package com.sumeet.persistancelist.data;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.sumeet.persistancelist.data.local.MemesLocalRepoImpl;
 import com.sumeet.persistancelist.data.remote.MemesRemoteRepoImpl;
@@ -34,14 +33,21 @@ public class MemesRepoImpl implements MemesRepo {
      */
     @Override
     public Observable<List<Meme>> getMemes() {
-        //noinspection ConstantConditions
         return remoteRepo.getAllMemes()
+                .doOnNext(localRepo::addMemes)
+                .filter(MemesRepoImpl::isValidResponse)
+                .map(this::extractListFromNetworkResponse)
+                .onErrorResumeNext(getMemesFromLocalRepo())
+                .subscribeOn(Schedulers.io());
+    }
 
-                        .doOnNext(localRepo::addMemes)
-                        .filter(MemesRepoImpl::isValidResponse)
-                        .map(it -> it.body().getData().getMemes())
-                        .onErrorResumeNext(localRepo.getAllMeme())
-                        .subscribeOn(Schedulers.io());
+    private Observable<List<Meme>> getMemesFromLocalRepo() {
+        return localRepo.getAllMeme();
+    }
+
+    private List<Meme> extractListFromNetworkResponse(@NonNull Response<MemesResponseDto> it) {
+        //noinspection ConstantConditions
+        return it.body().getData().getMemes();
     }
 
     public static boolean isValidResponse(Response<MemesResponseDto> memesResponseDtoResponse) {

@@ -21,20 +21,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sumeet.persistancelist.R;
-import com.sumeet.persistancelist.data.EspressoTestingIdlingResource;
-import com.sumeet.persistancelist.data.FetcherListener;
 import com.sumeet.persistancelist.data.Meme;
 import com.sumeet.persistancelist.data.MemesRepoImpl;
 import com.sumeet.persistancelist.ui.BaseFragmentInteractionListener;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
+import java.util.List;
 
-public class MemeListFragment extends Fragment implements CardAdapterCallback<Meme>,
-        FetcherListener {
+public class MemeListFragment extends Fragment
+        implements CardAdapterCallback<Meme>,
+        MemeListViewModel.MemeListViewModelInteraction {
 
-    @NonNull
-    private CompositeDisposable disposables = new CompositeDisposable();
 
     @Nullable
     private Context context;
@@ -65,9 +61,6 @@ public class MemeListFragment extends Fragment implements CardAdapterCallback<Me
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-
-        MemeListViewModel mViewModel = ViewModelProviders.of(this).get(MemeListViewModel.class);
-        mViewModel.setMemeList(memesRepo.getMemes());
         context = getContext();
         if (context instanceof MemeListFragmentInteractionListener) {
             activityCommunicator = (MemeListFragmentInteractionListener) context;
@@ -76,13 +69,14 @@ public class MemeListFragment extends Fragment implements CardAdapterCallback<Me
 
         if (rootView != null) {
             setViews(rootView);
-            initListeners(mViewModel, rootView);
+            MemeListViewModel mViewModel = ViewModelProviders.of(this).get(MemeListViewModel.class);
+            mViewModel.setDataAndSubscribe(this, memesRepo.getMemes());
+            initListeners(rootView);
         }
 
     }
 
-    private void initListeners(@NonNull MemeListViewModel mViewModel,
-                               @NonNull View rootView) {
+    private void initListeners(@NonNull View rootView) {
 
         TextView searchEditText = rootView.findViewById(R.id.et_search);
         TextView clearSearch = rootView.findViewById(R.id.clear_search);
@@ -113,25 +107,6 @@ public class MemeListFragment extends Fragment implements CardAdapterCallback<Me
         });
 
         clearSearch.setOnClickListener(v -> searchEditText.setText(""));
-
-        onFetchStarted();
-        disposables.add(
-                mViewModel.getMemeList()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .doOnNext(newMemes -> {
-                            if (memesAdapter != null) {
-                                memesAdapter.addData(newMemes);
-                                onFetchFinished();
-                                setRecyclerViewLoadAnimation();
-                            }
-                        })
-                        .doOnError(e -> {
-                            Log.e("sumeet", "sumeet", e);
-                            onFetchFinished();
-                        })
-                        .subscribe()
-        );
-
     }
 
     private void setRecyclerViewLoadAnimation() {
@@ -143,11 +118,9 @@ public class MemeListFragment extends Fragment implements CardAdapterCallback<Me
 
     private void setViews(@NonNull View rootView) {
         if (context != null) {
-
             recyclerView = rootView.findViewById(R.id.rv_memeList);
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
             memesAdapter = new CardAdapter(context, this);
-            memesAdapter.setHasStableIds(true);
             recyclerView.setAdapter(memesAdapter);
             if (activityCommunicator != null) {
                 activityCommunicator.setToolbar(getString(R.string.memes));
@@ -164,19 +137,27 @@ public class MemeListFragment extends Fragment implements CardAdapterCallback<Me
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        disposables.clear();
+    public void onFetchStart() {
+        if (memesAdapter != null) {
+            memesAdapter.showLoaders(true);
+        }
     }
 
     @Override
-    public void onFetchStarted() {
-        EspressoTestingIdlingResource.increment();
+    public void onFetchSuccess(@NonNull List<Meme> newMemes) {
+        if (memesAdapter != null) {
+            memesAdapter.showLoaders(false);
+            memesAdapter.addData(newMemes);
+            setRecyclerViewLoadAnimation();
+        }
     }
 
     @Override
-    public void onFetchFinished() {
-        EspressoTestingIdlingResource.decrement();
+    public void onFetchFailed(@NonNull Throwable e) {
+        if (memesAdapter != null) {
+            memesAdapter.showLoaders(false);
+        }
+        Log.e("sumeet", "error while fetching data", e);
     }
 
     public interface MemeListFragmentInteractionListener extends BaseFragmentInteractionListener {
